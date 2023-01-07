@@ -10,16 +10,14 @@ public class Main {
     public static void main(String[] args){
         String scheduleWebSiteUrl = "https://cs.msu.ru/studies/schedule";
         Document htmlCode = getHtmlCode(scheduleWebSiteUrl);
-        String htmlString = htmlCode.select("a[href]").toString();
-        System.out.println(htmlString);
-        System.out.println();
-        findWantedLink(htmlString);
+        String htmlString = htmlCode.toString();
 
-        String link = "https://cs.msu.ru/sites/cmc/files/docs/3_kurs_osen_2022_18.pdf";
-        File fileLoc = new File("C:\\Users\\Zigor\\Desktop\\MSU_schedule\\result.pdf");
+        FindFileFromHtml findFileFromHtml = new FindFileFromHtml(htmlString);
 
+        String schedulePdfLink = findFileFromHtml.findLinks(4);
+        File fileLoc = new File("C:\\Users\\Zigor\\Desktop\\projects\\MSU_schedule\\result.pdf");
         DownloadFileFromURL downloadFileFromURL = new DownloadFileFromURL();
-        downloadFileFromURL.download(link, fileLoc);
+        downloadFileFromURL.download(schedulePdfLink, fileLoc);
     }
 
     public static Document getHtmlCode(String scheduleWebSiteUrl) {
@@ -30,19 +28,5 @@ public class Main {
             e.printStackTrace();
         }
         return htmlDoc;
-    }
-
-    public static ArrayList<String> findWantedLink(String htmlString) {
-        String regex = "\"https:" + "[^,]+" + ".pdf\">";
-        ArrayList<String> links = new ArrayList<>();
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(htmlString);
-        while (matcher.find()) {
-            links.add(matcher.group());
-        }
-        for (String link : links) {
-            System.out.println(link);
-        }
-        return links;
     }
 }
